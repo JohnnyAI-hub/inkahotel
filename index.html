@@ -1,0 +1,460 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inka Hotel - Premium Room Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c5f2d;
+            --secondary-color: #97BC62;
+            --accent-color: #FFD700;
+            --dark-neutral: #2c3e50;
+            --light-neutral: #ecf0f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('logo.jpeg') center/cover;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            width: 180px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Dashboard Stats */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 1.8rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .available-stat { background: #e8f5e9; color: var(--primary-color); }
+        .occupied-stat { background: #ffebee; color: #c62828; }
+        .cleaning-stat { background: #fff8e1; color: #f9a825; }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Room Grid */
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .room-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .room-image {
+            height: 150px;
+            background: #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .room-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .room-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .available { background: var(--primary-color); }
+        .occupied { background: #c62828; }
+        .cleaning { background: var(--accent-color); color: var(--dark-neutral); }
+
+        .room-info {
+            padding: 1rem;
+        }
+
+        .room-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-neutral);
+            margin-bottom: 0.5rem;
+        }
+
+        .room-type {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+
+        .room-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .room-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <img src="logo.jpeg" alt="Inka Hotel Logo" class="logo">
+            <div class="nav-links">
+                <a href="#" class="nav-link">Dashboard</a>
+                <a href="#" class="nav-link">Rooms</a>
+                <a href="#" class="nav-link">Guests</a>
+                <a href="#" class="nav-link">Reports</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Dashboard Statistics -->
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon available-stat">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <div>
+                    <h3>Available</h3>
+                    <p id="availableCount">0 Rooms</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon occupied-stat">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <h3>Occupied</h3>
+                    <p id="occupiedCount">0 Rooms</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon cleaning-stat">
+                    <i class="fas fa-broom"></i>
+                </div>
+                <div>
+                    <h3>Cleaning</h3>
+                    <p id="cleaningCount">0 Rooms</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-controls">
+            <button class="filter-btn active" data-filter="all">All Rooms</button>
+            <button class="filter-btn" data-filter="available">Available</button>
+            <button class="filter-btn" data-filter="occupied">Occupied</button>
+            <button class="filter-btn" data-filter="cleaning">Cleaning</button>
+            <select class="filter-btn" id="roomTypeFilter">
+                <option value="all">All Types</option>
+                <option value="standard">Standard</option>
+                <option value="deluxe">Deluxe</option>
+                <option value="suite">Suite</option>
+            </select>
+        </div>
+
+        <!-- Room Grid -->
+        <div class="room-grid" id="roomGrid"></div>
+
+        <!-- Room Detail Modal -->
+        <div class="modal" id="roomModal">
+            <div class="modal-content">
+                <span class="modal-close">&times;</span>
+                <h2 id="modalRoomNumber"></h2>
+                <div class="room-type" id="modalRoomType"></div>
+                <div class="room-status" id="modalRoomStatus"></div>
+                <div class="modal-details">
+                    <p>Floor: <span id="modalFloor"></span></p>
+                    <p>Capacity: <span id="modalCapacity"></span></p>
+                    <p>Price/Night: $<span id="modalPrice"></span></p>
+                    <div class="status-controls">
+                        <button class="status-btn available">Set Available</button>
+                        <button class="status-btn occupied">Set Occupied</button>
+                        <button class="status-btn cleaning">Set Cleaning</button>
+                    </div>
+                    <textarea id="roomNotes" placeholder="Add notes..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Room Data Structure
+        let rooms = JSON.parse(localStorage.getItem('inkaHotelRooms')) || Array.from({length: 60}, (_, i) => ({
+            number: i + 1,
+            type: ['standard', 'deluxe', 'suite'][Math.floor(Math.random() * 3)],
+            status: 'available',
+            floor: Math.ceil((i + 1)/10),
+            capacity: [2, 3, 4][Math.floor(Math.random() * 3)],
+            price: [100, 150, 300][Math.floor(Math.random() * 3)],
+            notes: ''
+        }));
+
+        // Initialize App
+        function init() {
+            renderRooms();
+            updateStats();
+            addEventListeners();
+        }
+
+        // Render Rooms
+        function renderRooms(filter = 'all', type = 'all') {
+            const grid = document.getElementById('roomGrid');
+            grid.innerHTML = '';
+            
+            rooms.filter(room => 
+                (filter === 'all' || room.status === filter) &&
+                (type === 'all' || room.type === type)
+            ).forEach(room => {
+                const card = document.createElement('div');
+                card.className = 'room-card';
+                card.innerHTML = `
+                    <div class="room-image">
+                        <img src="bed.png">
+                        <div class="room-status ${room.status}">${room.status.toUpperCase()}</div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-number">Room ${room.number}</div>
+                        <div class="room-type">${room.type.toUpperCase()}</div>
+                        <div class="room-details">
+                            <span>Floor ${room.floor}</span>
+                            <span>$${room.price}/night</span>
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => showRoomModal(room));
+                grid.appendChild(card);
+            });
+        }
+
+        // Update Statistics
+        function updateStats() {
+            const available = rooms.filter(r => r.status === 'available').length;
+            const occupied = rooms.filter(r => r.status === 'occupied').length;
+            const cleaning = rooms.filter(r => r.status === 'cleaning').length;
+            
+            document.getElementById('availableCount').textContent = `${available} Rooms`;
+            document.getElementById('occupiedCount').textContent = `${occupied} Rooms`;
+            document.getElementById('cleaningCount').textContent = `${cleaning} Rooms`;
+        }
+
+        // Show Room Modal
+        function showRoomModal(room) {
+            const modal = document.getElementById('roomModal');
+            document.getElementById('modalRoomNumber').textContent = `Room ${room.number}`;
+            document.getElementById('modalRoomType').textContent = room.type.toUpperCase();
+            document.getElementById('modalRoomStatus').textContent = room.status.toUpperCase();
+            document.getElementById('modalRoomStatus').className = `room-status ${room.status}`;
+            document.getElementById('modalFloor').textContent = room.floor;
+            document.getElementById('modalCapacity').textContent = room.capacity;
+            document.getElementById('modalPrice').textContent = room.price;
+            document.getElementById('roomNotes').value = room.notes;
+            
+            modal.style.display = 'flex';
+        }
+
+        // Event Listeners
+        function addEventListeners() {
+            // Filter Buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const filter = this.dataset.filter;
+                    const type = document.getElementById('roomTypeFilter').value;
+                    renderRooms(filter, type);
+                });
+            });
+
+            // Room Type Filter
+            document.getElementById('roomTypeFilter').addEventListener('change', () => {
+                const filter = document.querySelector('.filter-btn.active').dataset.filter;
+                const type = document.getElementById('roomTypeFilter').value;
+                renderRooms(filter, type);
+            });
+
+            // Modal Close
+            document.querySelector('.modal-close').addEventListener('click', () => {
+                document.getElementById('roomModal').style.display = 'none';
+            });
+
+            // Status Change Buttons
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const status = this.classList[1];
+                    const roomNumber = parseInt(document.getElementById('modalRoomNumber').textContent.split(' ')[1]);
+                    const room = rooms.find(r => r.number === roomNumber);
+                    room.status = status;
+                    saveData();
+                    renderRooms();
+                    updateStats();
+                    document.getElementById('roomModal').style.display = 'none';
+                });
+            });
+
+            // Save Notes
+            document.getElementById('roomNotes').addEventListener('change', function() {
+                const roomNumber = parseInt(document.getElementById('modalRoomNumber').textContent.split(' ')[1]);
+                const room = rooms.find(r => r.number === roomNumber);
+                room.notes = this.value;
+                saveData();
+            });
+        }
+
+        // Save Data
+        function saveData() {
+            localStorage.setItem('inkaHotelRooms', JSON.stringify(rooms));
+        }
+
+        // Initialize Application
+        init();
+    </script>
+</body>
+</html>
